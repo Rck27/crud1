@@ -34,20 +34,62 @@ content > div {
 <header>
 <h1 align="center">Basic Crud</h1>
 <form align="center" action="./index.php" method="POST">
+	<input type="submit" name="Home" value="Home" class="btn btn-outline-primary">
 	<input type="submit" name="get" value="Get Data" class="btn btn-outline-primary">
-	<input type="submit" name="submit" value="Add/Edit" class="btn btn-outline-primary">
+	<input type="submit" name="submit" value="Add" class="btn btn-outline-primary">
+	<input type="submit" name="edit" value="Edit" class="btn btn-outline-primary">
 </form>
 </header>
 <content>
 <?php
 include "config.php";
-if (isset($_POST["get"])) {
-	echo "<table border='1' align='center'><tr>
+function show(){
+	include "config.php";
+
+		echo "<table border='1' align='center'><tr>
 		<th>No.</th>
 		<th>Nama</th>
 		<th>Email</th>
 		<th>Alamat</th>
 		<th>Foto</th>
+	</tr>";
+	$sql = $conn->query("SELECT * FROM murid");
+		while ($row = mysqli_fetch_array($sql)) {
+		echo "<tr>";
+		echo "<th>".$row[0]."</th>";
+		echo "<th>".$row[1]."</th>";
+		echo "<th>".$row[2]."</th>";
+		echo "<th>".$row[3]."</th>";
+		$now = $row[4];
+		if($row[4] == NULL){
+			$now = "anon";
+		}
+		echo "<th><img src='./img/".$now.".png' width='100' height='100' onerror='this.onerror=null; this.src='anon.png''></th> ";
+		// echo "<th><img src='./img/".$row[4].' width='100' height='100'></th>";
+		echo "<th><input type='button' value='edit' onclick='show()'>";
+		echo "<input type='button' value='Delete' onclick=''></th>";
+		echo "</tr>";
+	}
+}
+
+if (isset($_POST["get"])) {
+	echo '
+	<form align="center" action="./index.php" method="POST">
+<input type="text" name="pw" placeholder="password" class="form-control" id="pw" > 
+	<input type="submit" name="ispw" value="login" class="btn btn-outline-primary">
+
+	</form>
+	';
+}
+if (isset($_POST["ispw"])) {
+	if ($_POST[pw] == "admin") {
+		echo "<table border='1' align='center'><tr>
+		<th>No.</th>
+		<th>Nama</th>
+		<th>Email</th>
+		<th>Alamat</th>
+		<th>Foto</th>
+		<th>Action</th>
 	</tr>";
 	$sql = $conn->query("SELECT * FROM murid");
 	while ($row = mysqli_fetch_array($sql)) {
@@ -60,11 +102,65 @@ if (isset($_POST["get"])) {
 		if($row[4] == NULL){
 			$now = "anon";
 		}
+		echo "<th><img src='./img/".$now.".png' width='100' height='100' onerror='this.onerror=null; this.src='anon.png''></th> ";
+		// echo "<th><img src='./img/".$row[4].' width='100' height='100'></th>";
+		echo "<th><input type='button' value='edit' onclick='show()'>";
+		echo "<input type='button' value='Delete' onclick=''></th>";
+		echo "</tr>";
+	}
+	} //end if
+	else{
+		// $name = $_POST['search'];
+		// $sql = "SELECT * FROM `murid` WHERE nama=$name";
 
+		echo '
+		<form align="center" action="./index.php" method="POST">
+		<input type="text" class="form-control" name="search" id="search" placeholder="search for name">
+		<input type="submit" name="srch" class="btn btn-outline-primary">
+		</form>
+		';
+	}
+}
+if (isset($_POST['search'])) {
+	if (!$_POST['search']) {
+		echo 'tesssss';
+	}
+	else {
+		$empty = true;
+		echo "<table border='1' align='center'><tr>
+		<th>No.</th>
+		<th>Nama</th>
+		<th>Email</th>
+		<th>Alamat</th>
+		<th>Foto</th>
+		";
+		$sql = $conn->query("SELECT * FROM murid where nama='$_POST[search]'");
+		while ($row = mysqli_fetch_array($sql)) {
+			echo "<tr>";
+		echo "<th>".$row[0]."</th>";
+		echo "<th>".$row[1]."</th>";
+		echo "<th>".$row[2]."</th>";
+		echo "<th>".$row[3]."</th>";
+		$now = $row[4];
+		if($row[4] == NULL){
+			$now = "anon";
+		}
 		echo "<th><img src='./img/".$now.".png' width='100' height='100' onerror='this.onerror=null; this.src='anon.png''></th> ";
 		// echo "<th><img src='./img/".$row[4].' width='100' height='100'></th>";
 		echo "</tr>";
+			$empty = false;
+		}
+		if($empty) {
+			echo "string";
+		}
+		//echo $row[0];
+		//$sql = conn->query("SELECT * FROM murid WHERE nama='$_POST[search]");
+		//echo $sql;
 	}
+	//$sql = conn->query("select * from murid where nama='$nm'");
+	}
+if (isset($_POST["Home"])) {
+	show();
 }
 if( isset($_POST["submit"])){
 echo '<form method="post" action="./index.php" enctype="multipart/form-data">
@@ -86,14 +182,9 @@ echo '<form method="post" action="./index.php" enctype="multipart/form-data">
 <input type="submit" name="bt" class="btn btn-outline-primary">
 </form>';
 }
-//  if ( isset($_POST["submit"])) {
-//  	include 'config.php';
-//  	$sql = $conn->query("SELECT * FROM murid");
+if (isset($_POST["edit"])) {
 
-//  	while($row = mysqli_fetch_array($sql)){
-
-// // 	echo $row[0];
-//  }
+}
 
 if (isset($_POST["bt"])) {
 	#echo $_POST["nama"];
@@ -107,9 +198,7 @@ if (isset($_POST["bt"])) {
 	echo $index;
 	#$index = 100;
 	$sql = "INSERT INTO murid(Nama, email, alamat, foto) VALUES('$nm', '$eml', '$almt', '$index')";
-	if (!$conn->query($sql)) {
-		die("ewow");
-	}
+	
 	echo $index;
 	$image_file = $_FILES['image'];
 	if (!isset($image_file)) {
@@ -117,7 +206,11 @@ if (isset($_POST["bt"])) {
 	}
 	if (!exif_imagetype($image_file["tmp_name"])) {
 		#header("Location: ./index.php")
-		die("not a picture");
+		$index = '';
+		echo "not a picture";
+	}
+	if (!$conn->query($sql)) {
+		die("ewow");
 	}
 
 	echo $image_file["tmp_name"];
