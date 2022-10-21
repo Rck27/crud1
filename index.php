@@ -29,6 +29,18 @@ content > div {
 		if ( window.history.replaceState ) {
   window.history.replaceState( null, null, window.location.href );
 }
+	function update(id){
+		var xml = new XMLHttpRequest();
+	}
+	function edit(id1){
+		let a = document.getElementById('B'+id1).innerHTML;
+		document.getElementById('B'+id1).innerHTML = "<input type='text' value='"+a+"'>"; //edit the name as input to be changed
+		let val = document.getElementById('B'+id1).value;
+		console.log(val);
+		document.getElementById('E0').innerHTML = `<button onclick=console.log(val)>kirim</button>`;
+		// document.getElementById('D'+id1).onclick = console.log(document.getElementById('D'+id1).value);
+		//console.log(a);
+	}
 	</script>
 
 <header>
@@ -39,6 +51,7 @@ content > div {
 	<input type="submit" name="submit" value="Add" class="btn btn-outline-primary">
 	<input type="submit" name="edit" value="Edit" class="btn btn-outline-primary">
 </form>
+
 </header>
 <content>
 <?php
@@ -54,22 +67,27 @@ function show(){
 		<th>Foto</th>
 	</tr>";
 	$sql = $conn->query("SELECT * FROM murid");
+	$index = 0;
 		while ($row = mysqli_fetch_array($sql)) {
-		echo "<tr>";
-		echo "<th>".$row[0]."</th>";
-		echo "<th>".$row[1]."</th>";
-		echo "<th>".$row[2]."</th>";
-		echo "<th>".$row[3]."</th>";
 		$now = $row[4];
-		if($row[4] == NULL){
+				if($row[4] == NULL){
 			$now = "anon";
 		}
-		echo "<th><img src='./img/".$now.".png' width='100' height='100' onerror='this.onerror=null; this.src='anon.png''></th> ";
-		// echo "<th><img src='./img/".$row[4].' width='100' height='100'></th>";
-		echo "<th><input type='button' value='edit' onclick='show()'>";
-		echo "<input type='button' value='Delete' onclick=''></th>";
-		echo "</tr>";
+		//echo "<tr>";
+$now = $row[4];
+		echo "<tr><th>$row[0]</th>
+		<th id='B$index'>$row[1]</th>
+		<th id='C$index'>$row[2]</th>
+		<th>$row[3]</th><th><img src='./img/$row[4].png' onerror='this.src=`./img/anon.png`' width='100' height='100'></th>
+		<th><button id='D$index' onclick=edit('$index')>Edit</button>
+		<button id='E$index'>Delete</button></th></tr>";
+		echo"\n";
+		$index+=1;
+
 	}
+}
+function edit($id){
+
 }
 
 if (isset($_POST["get"])) {
@@ -83,31 +101,32 @@ if (isset($_POST["get"])) {
 }
 if (isset($_POST["ispw"])) {
 	if ($_POST[pw] == "admin") {
-		echo "<table border='1' align='center'><tr>
-		<th>No.</th>
-		<th>Nama</th>
-		<th>Email</th>
-		<th>Alamat</th>
-		<th>Foto</th>
-		<th>Action</th>
-	</tr>";
-	$sql = $conn->query("SELECT * FROM murid");
-	while ($row = mysqli_fetch_array($sql)) {
-		echo "<tr>";
-		echo "<th>".$row[0]."</th>";
-		echo "<th>".$row[1]."</th>";
-		echo "<th>".$row[2]."</th>";
-		echo "<th>".$row[3]."</th>";
-		$now = $row[4];
-		if($row[4] == NULL){
-			$now = "anon";
-		}
-		echo "<th><img src='./img/".$now.".png' width='100' height='100' onerror='this.onerror=null; this.src='anon.png''></th> ";
-		// echo "<th><img src='./img/".$row[4].' width='100' height='100'></th>";
-		echo "<th><input type='button' value='edit' onclick='show()'>";
-		echo "<input type='button' value='Delete' onclick=''></th>";
-		echo "</tr>";
-	}
+		show();
+	// 	echo "<table border='1' align='center'><tr>
+	// 	<th>No.</th>
+	// 	<th>Nama</th>
+	// 	<th>Email</th>
+	// 	<th>Alamat</th>
+	// 	<th>Foto</th>
+	// 	<th>Action</th>
+	// </tr>";
+	// $sql = $conn->query("SELECT * FROM murid");
+	// while ($row = mysqli_fetch_array($sql)) {
+	// 	echo "<tr>";
+	// 	echo "<th>".$row[0]."</th>";
+	// 	echo "<th>".$row[1]."</th>";
+	// 	echo "<th>".$row[2]."</th>";
+	// 	echo "<th>".$row[3]."</th>";
+	// 	$now = $row[4];
+	// 	if($row[4] == NULL){
+	// 		$now = "anon";
+	// 	}
+	// 	echo "<th><img src='./img/".$now.".png' width='100' height='100' onerror='this.onerror=null; this.src='anon.png''></th> ";
+	// 	// echo "<th><img src='./img/".$row[4].' width='100' height='100'></th>";
+	// 	echo "<th><input type='button' value='edit' onclick='show()'>";
+	// 	echo "<input type='button' value='Delete' onclick=''></th>";
+	// 	echo "</tr>";
+	// }
 	} //end if
 	else{
 		// $name = $_POST['search'];
@@ -186,7 +205,7 @@ if (isset($_POST["edit"])) {
 
 }
 
-if (isset($_POST["bt"])) {
+if (isset($_POST["bt"])) {///upload new data
 	#echo $_POST["nama"];
 	$nm = $_POST["nama"];
 	$eml = $_POST["email"];
@@ -218,6 +237,12 @@ if (isset($_POST["bt"])) {
 }
 #echo $_GET["nama"];
 ?>
+<!-- <script type="text/javascript">
+	function edit(let id){
+		console.log("ts");
+		console.log(document.getElementById(id).value);
+	}
+</script> -->
 </tr>
 </table>
 </content>
